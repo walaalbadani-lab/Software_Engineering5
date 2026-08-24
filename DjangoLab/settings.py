@@ -52,12 +52,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "DjangoLab.wsgi.application"
 
+# ==========================================
+# إعدادات قاعدة البيانات (PostgreSQL)
+# ==========================================
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'invitations_db',
+        'USER': 'postgres',
+        'PASSWORD': '12345',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+    
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

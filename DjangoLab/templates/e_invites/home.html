@@ -178,9 +178,24 @@
         <article class="card" data-invite="جرائد وورقيات ورق جريدة"><img src="{% static 'e_invites/18.jpg' %}" alt=""><div class="card-body"><h3>جرائد وورقيات</h3><div class="price">500 ر.ي</div><a class="btn" href="{% url 'order' %}?product=جرائد وورقيات">طلب</a></div></article>
 
         {% for product in products %}
-        <article class="card" data-invite="{{ product.title }}">
-          {% if product.image %}<img src="{{ product.image.url }}" alt="">{% else %}<img src="{% static 'e_invites/22.jpg' %}" alt="">{% endif %}
-          <div class="card-body"><h3>{{ product.title }}</h3><div class="price">{% if product.price %}{{ product.price }}{% else %}1000{% endif %} ر.ي</div><a class="btn" href="{% url 'order' %}?product={{ product.title }}">طلب</a></div>
+        <article class="card" data-invite="{{ product.name }}">
+          {% if product.image %}
+            {% if ".mp4" in product.image.url|lower or ".mov" in product.image.url|lower or ".avi" in product.image.url|lower %}
+              <video muted playsinline preload="metadata" data-full="{{ product.image.url }}">
+                <source src="{{ product.image.url }}" type="video/mp4">
+                <source src="{{ product.image.url }}" type="video/quicktime">
+              </video>
+            {% else %}
+              <img src="{{ product.image.url }}" alt="">
+            {% endif %}
+          {% else %}
+            <img src="{% static 'e_invites/22.jpg' %}" alt="">
+          {% endif %}
+          <div class="card-body">
+            <h3>{{ product.name }}</h3>
+            <div class="price">{% if product.price %}{{ product.price }}{% else %}1000{% endif %} ر.ي</div>
+            <a class="btn" href="{% url 'order' %}?product={{ product.name }}">طلب</a>
+          </div>
         </article>
         {% endfor %}
       </div>

@@ -14,9 +14,10 @@ def ok_password(p):
     return bool(re.fullmatch(r"[A-Za-z0-9\-]{6,30}", p or ""))
 
 def register_view(request):
-    if request.user.is_authenticated:
-        messages.info(request, "أنت داخل مسبقاً.")
-        return redirect("home")
+    # تم إيقاف هذا الشرط عشان تقدري تسجلي مستخدمين وإنتي داخلة بحساب الإدمن
+    # if request.user.is_authenticated:
+    #     messages.info(request, "أنت داخل مسبقاً.")
+    #     return redirect("home")
 
     data = {"username": "", "email": ""}
     if request.method == "POST":
@@ -63,7 +64,7 @@ def register_view(request):
     return render(request, "account/register.html", data)
 
 
-# --- الدالة المفقودة التي سببت الخطأ ---
+# --- دالة تسجيل الدخول ---
 def login_view(request):
     if request.user.is_authenticated:
         messages.info(request, "أنت داخل مسبقاً.")
