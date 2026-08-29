@@ -1,236 +1,863 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>دعوات الكترونيه🐆</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root { --brown:#3a2119; --gold:#d7b57a; --card:rgba(255,248,241,.88); --text:#2b1812; --muted:#8a6a56; }
-    :root[data-theme="dark"] { --card:rgba(36,20,16,.86); --text:#f4e9dd; --muted:#cbb39e; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    html, body { min-height:100%; }
-    body { font-family:"Cairo",Tahoma,sans-serif; color:var(--text); background:#ead9c8; }
-    body::before { content:""; position:fixed; inset:0; background:url("{% static 'e_invites/22.jpg' %}") center/cover no-repeat; opacity:.18; pointer-events:none; z-index:0; }
-    :root[data-theme="dark"] body { background:#160d0a; }
-    :root[data-theme="dark"] body::before { opacity:.12; }
-    .app { position:relative; z-index:1; min-height:100vh; }
-    img, video { max-width:100%; display:block; }
-    a { color:inherit; text-decoration:none; }
-    button, input { font:inherit; cursor:pointer; }
+    :root {
+      --brown:#3a2119;
+      --gold:#d7b57a;
+      --card:rgba(255,248,241,.88);
+      --text:#2b1812;
+      --muted:#8a6a56;
+    }
+
+    :root[data-theme="dark"] {
+      --card:rgba(36,20,16,.86);
+      --text:#f4e9dd;
+      --muted:#cbb39e;
+    }
+
+    * {
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html, body {
+      min-height:100%;
+    }
+
+    body {
+      font-family:"Cairo",Tahoma,sans-serif;
+      color:var(--text);
+      background:#ead9c8;
+    }
+
+    body::before {
+      content:"";
+      position:fixed;
+      inset:0;
+      background:url("{% static 'e_invites/22.jpg' %}") center/cover no-repeat;
+      opacity:.18;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    :root[data-theme="dark"] body {
+      background:#160d0a;
+    }
+
+    :root[data-theme="dark"] body::before {
+      opacity:.12;
+    }
+
+    .app {
+      position:relative;
+      z-index:1;
+      min-height:100vh;
+    }
+
+    img, video {
+      max-width:100%;
+      display:block;
+    }
+
+    a {
+      color:inherit;
+      text-decoration:none;
+    }
+
+    button, input {
+      font:inherit;
+      cursor:pointer;
+    }
 
     .topbar {
-      position:sticky; top:0; z-index:20;
-      display:flex; align-items:center; gap:12px;
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:flex;
+      align-items:center;
+      gap:12px;
       padding:12px 18px;
       background:rgba(58,33,25,.88);
       color:#f6eee4;
     }
-    .brand {
-      display:flex; align-items:center; gap:10px;
-    }
-    .brand img {
-      width:46px; height:46px; border-radius:50%;
-      object-fit:cover; border:2px solid var(--gold); background:#1b100c;
-    }
-    .brand b { display:block; font-size:.95rem; }
-    .brand span { display:block; color:var(--gold); font-size:.75rem; direction:ltr; text-align:right; }
-    .left-tools {
-      margin-right:auto; display:flex; align-items:center; gap:8px;
-    }
-    .search { width:min(280px,42vw); }
-    .search input {
-      width:100%; border:0; border-radius:999px; padding:10px 14px; background:#fff8f1; color:#23140f;
-    }
-    .dots, .bell {
-      width:42px; height:42px; border:1px solid rgba(215,181,122,.3);
-      border-radius:12px; background:transparent; color:#f6eee4; font-size:20px; position:relative;
-    }
-    .badge {
-      position:absolute; top:-4px; left:-4px; min-width:17px; height:17px;
-      padding:0 4px; border-radius:999px; background:var(--gold); color:#2b1812;
-      font-size:10px; font-weight:800; display:grid; place-items:center;
-    }
-    .note {
-      display:none; text-align:center; color:var(--gold); padding:7px;
-      font-size:.82rem; background:rgba(36,20,16,.72);
-    }
-    .note.show { display:block; }
 
-    .overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); border:0; display:none; z-index:30; }
-    .overlay.show { display:block; }
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .brand img {
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      object-fit:cover;
+      border:2px solid var(--gold);
+      background:#1b100c;
+    }
+
+    .brand b {
+      display:block;
+      font-size:.95rem;
+    }
+
+    .brand span {
+      display:block;
+      color:var(--gold);
+      font-size:.75rem;
+      direction:ltr;
+      text-align:right;
+    }
+
+    .left-tools {
+      margin-right:auto;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .search {
+      width:min(280px,42vw);
+    }
+
+    .search input {
+      width:100%;
+      border:0;
+      border-radius:999px;
+      padding:10px 14px;
+      background:#fff8f1;
+      color:#23140f;
+    }
+
+    .dots, .bell {
+      width:42px;
+      height:42px;
+      border:1px solid rgba(215,181,122,.3);
+      border-radius:12px;
+      background:transparent;
+      color:#f6eee4;
+      font-size:20px;
+      position:relative;
+    }
+
+    .badge {
+      position:absolute;
+      top:-4px;
+      left:-4px;
+      min-width:17px;
+      height:17px;
+      padding:0 4px;
+      border-radius:999px;
+      background:var(--gold);
+      color:#2b1812;
+      font-size:10px;
+      font-weight:800;
+      display:grid;
+      place-items:center;
+    }
+
+    .note {
+      display:none;
+      text-align:center;
+      color:var(--gold);
+      padding:7px;
+      font-size:.82rem;
+      background:rgba(36,20,16,.72);
+    }
+
+    .note.show {
+      display:block;
+    }
+
+    .overlay {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      border:0;
+      display:none;
+      z-index:30;
+    }
+
+    .overlay.show {
+      display:block;
+    }
+
     .sidebar {
-      position:fixed; top:0; right:-240px; width:228px; height:100%;
-      background:rgba(26,14,11,.97); color:#f6eee4;
-      padding:58px 12px 18px; z-index:40; transition:.22s;
+      position:fixed;
+      top:0;
+      right:-240px;
+      width:228px;
+      height:100%;
+      background:rgba(26,14,11,.97);
+      color:#f6eee4;
+      padding:58px 12px 18px;
+      z-index:40;
+      transition:.22s;
     }
-    .sidebar.open { right:0; }
+
+    .sidebar.open {
+      right:0;
+    }
+
     .sidebar a, .theme-btn {
-      display:block; width:100%; text-align:right; color:#f6eee4;
-      background:none; border:0; padding:9px 11px; border-radius:10px;
-      margin-bottom:4px; font-size:.9rem;
+      display:block;
+      width:100%;
+      text-align:right;
+      color:#f6eee4;
+      background:none;
+      border:0;
+      padding:9px 11px;
+      border-radius:10px;
+      margin-bottom:4px;
+      font-size:.9rem;
     }
-    .sidebar a:hover { background:rgba(215,181,122,.14); color:var(--gold); }
-    .theme-btn { margin-top:10px; border:1px solid rgba(215,181,122,.3); border-radius:999px; text-align:center; }
+
+    .sidebar a:hover {
+      background:rgba(215,181,122,.14);
+      color:var(--gold);
+    }
+
+    .theme-btn {
+      margin-top:10px;
+      border:1px solid rgba(215,181,122,.3);
+      border-radius:999px;
+      text-align:center;
+    }
+
     .ig {
-      display:flex; align-items:center; gap:10px; margin:8px 0; padding:8px 10px;
-      border:1px solid rgba(215,181,122,.2); border-radius:12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:8px 0;
+      padding:8px 10px;
+      border:1px solid rgba(215,181,122,.2);
+      border-radius:12px;
     }
+
     .ig .mark {
-      width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
-      background:linear-gradient(135deg,#f9d29d,#c08a4d); color:#3a2119; font-weight:800; font-size:.72rem;
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#f9d29d,#c08a4d);
+      color:#3a2119;
+      font-weight:800;
+      font-size:.72rem;
     }
-    .ig span { display:block; color:#d4c0aa; font-size:.72rem; direction:ltr; text-align:right; }
+
+    .ig span {
+      display:block;
+      color:#d4c0aa;
+      font-size:.72rem;
+      direction:ltr;
+      text-align:right;
+    }
 
     .notif {
-      position:fixed; top:72px; left:16px; z-index:50; width:min(340px,calc(100% - 32px));
-      display:none; padding:14px; background:var(--card); border-radius:16px; box-shadow:0 16px 36px rgba(0,0,0,.18);
+      position:fixed;
+      top:72px;
+      left:16px;
+      z-index:50;
+      width:min(340px,calc(100% - 32px));
+      display:none;
+      padding:14px;
+      background:var(--card);
+      border-radius:16px;
+      box-shadow:0 16px 36px rgba(0,0,0,.18);
     }
-    .notif.show { display:block; }
-    .notif h4 { margin-bottom:8px; }
-    .notif-item { padding:8px 0; border-bottom:1px solid rgba(139,94,60,.15); font-size:.82rem; }
-    .notif-item span { color:var(--muted); font-size:.74rem; }
 
-    .page { width:min(1240px,94%); margin:0 auto; padding:28px 0 70px; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:22px; }
+    .notif.show {
+      display:block;
+    }
+
+    .notif h4 {
+      margin-bottom:8px;
+    }
+
+    .notif-item {
+      padding:8px 0;
+      border-bottom:1px solid rgba(139,94,60,.15);
+      font-size:.82rem;
+    }
+
+    .notif-item span {
+      color:var(--muted);
+      font-size:.74rem;
+    }
+
+    .page {
+      width:min(1240px,94%);
+      margin:0 auto;
+      padding:28px 0 70px;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:22px;
+    }
+
     .card {
-      background:var(--card); border:1px solid rgba(215,181,122,.18); border-radius:22px;
-      overflow:hidden; box-shadow:0 14px 32px rgba(47,27,20,.10);
+      background:var(--card);
+      border:1px solid rgba(215,181,122,.18);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 14px 32px rgba(47,27,20,.10);
     }
-    .card img, .card video { width:100%; height:240px; object-fit:cover; cursor:zoom-in; }
-    .card-body { padding:16px 18px 18px; }
-    .card h3 { font-size:1.1rem; }
-    .price { color:#8b5a3c; font-weight:800; margin:8px 0 12px; }
-    .btn { display:inline-block; background:var(--brown); color:#f6eee4; border-radius:999px; padding:8px 16px; font-size:.88rem; font-weight:700; }
-    .hidden { display:none !important; }
-    .footer { text-align:center; padding:16px; color:#6b5344; font-size:.78rem; }
 
-    .lightbox { position:fixed; inset:0; z-index:100; background:rgba(18,10,8,.86); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:.25s; }
-    .lightbox.show { opacity:1; pointer-events:all; }
-    .lightbox img, .lightbox video { max-width:90%; max-height:82vh; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,.45); }
-    .lb-x { position:absolute; top:18px; right:18px; width:44px; height:44px; border:0; border-radius:50%; background:rgba(255,255,255,.12); color:#fff; font-size:22px; }
-    .lb-x:hover { background:rgba(255,255,255,.25); color:var(--gold); }
+    .card img, .card .video-thumb-container {
+      width:100%;
+      height:240px;
+      object-fit:cover;
+      cursor:pointer;
+      background:#241512;
+    }
 
-    @media (max-width:700px) {
-      .brand span { display:none; }
-      .search { width:min(160px,40vw); }
+    .card-body {
+      padding:16px 18px 18px;
+    }
+
+    .card h3 {
+      font-size:1.1rem;
+    }
+
+    .price {
+      color:#8b5a3c;
+      font-weight:800;
+      margin:8px 0 12px;
+    }
+
+    .btn {
+      display:inline-block;
+      background:var(--brown);
+      color:#f6eee4;
+      border-radius:999px;
+      padding:8px 16px;
+      font-size:.88rem;
+      font-weight:700;
+    }
+
+    .hidden {
+      display:none !important;
+    }
+
+    .footer {
+      text-align:center;
+      padding:16px;
+      color:#6b5344;
+      font-size:.78rem;
+    }
+
+    .admin-bar {
+      text-align:center;
+      margin-bottom:24px;
+    }
+
+    .btn-add {
+      background:var(--gold);
+      color:var(--brown);
+      padding:10px 22px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:.9rem;
+      display:inline-block;
+      border:1px solid var(--brown);
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+      cursor:pointer;
+    }
+
+    .admin-actions {
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .btn-edit {
+      flex:1;
+      background:#c08a4d;
+      color:#fff;
+      text-align:center;
+      padding:6px;
+      border-radius:12px;
+      font-size:.8rem;
+      font-weight:700;
+      border:0;
+      cursor:pointer;
+    }
+
+    .btn-delete {
+      flex:1;
+      background:#a33b3b;
+      color:#fff;
+      text-align:center;
+      padding:6px;
+      border-radius:12px;
+      font-size:.8rem;
+      font-weight:700;
+      border:0;
+      cursor:pointer;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .modal-backdrop {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      z-index:100;
+      display:none;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .modal-backdrop.show {
+      display:flex;
+    }
+
+    .modal-box {
+      background:var(--card);
+      padding:24px;
+      border-radius:16px;
+      width:min(400px,90%);
+      box-shadow:0 15px 35px rgba(0,0,0,0.3);
+      border:2px solid var(--gold);
+      max-height:90vh;
+      overflow-y:auto;
+    }
+
+    .modal-box h3 {
+      margin-bottom:15px;
+      color:var(--brown);
+    }
+
+    .modal-box p {
+      margin-bottom:10px;
+      font-size:.9rem;
+    }
+
+    .modal-box input, .modal-box select, .modal-box textarea {
+      width:100%;
+      padding:8px;
+      border-radius:6px;
+      border:1px solid var(--muted);
+      margin-top:4px;
+      background:#fff8f1;
+    }
+
+    .modal-box button[type="submit"], .modal-box .btn-block {
+      background:var(--brown);
+      color:white;
+      border:0;
+      padding:10px;
+      border-radius:8px;
+      font-weight:bold;
+      width:100%;
+      margin-top:10px;
+      cursor:pointer;
+    }
+
+    .modal-close {
+      background:transparent;
+      border:0;
+      float:left;
+      font-size:18px;
+      font-weight:bold;
+      cursor:pointer;
+      color:var(--text);
+    }
+
+    .lightbox {
+      position:fixed;
+      inset:0;
+      z-index:100;
+      background:rgba(18,10,8,.86);
+      backdrop-filter:blur(8px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      pointer-events:none;
+      transition:.25s;
+    }
+
+    .lightbox.show {
+      opacity:1;
+      pointer-events:all;
+    }
+
+    .lightbox img, .lightbox video {
+      max-width:90%;
+      max-height:82vh;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,.45);
+    }
+
+    .lb-x {
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:44px;
+      height:44px;
+      border:0;
+      border-radius:50%;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:22px;
+      z-index:2;
+    }
+
+    .lb-x:hover {
+      background:rgba(255,255,255,.25);
+      color:var(--gold);
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <header class="topbar">
-      <a class="brand" href="{% url 'home' %}">
-        <img src="{% static 'e_invites/22.jpg' %}" alt="_4cioq">
-        <div><b>دعوات الكترونيه🐆</b><span>_4cioq</span></div>
-      </a>
-      <div class="left-tools">
-        <form class="search" id="searchForm">
-          <input id="inviteSearch" type="search" value="{{ q }}" placeholder="بحث">
-        </form>
-        <button class="bell" id="bellBtn" type="button">⌂{% if notification_count %}<span class="badge">{{ notification_count }}</span>{% endif %}</button>
-        <button class="dots" id="menuBtn" type="button">⋯</button>
+<div class="app">
+
+  <header class="topbar">
+    <a class="brand" href="{% url 'home' %}">
+      <img src="{% static 'e_invites/22.jpg' %}" alt="_4cioq">
+      <div>
+        <b>دعوات الكترونيه🐆</b>
+        <span>_4cioq</span>
       </div>
-    </header>
+    </a>
 
-    <div class="note" id="resultNote"></div>
-
-    <div class="notif" id="notifPanel">
-      <h4>الإشعارات</h4>
-      {% if user.is_authenticated %}
-        {% for item in notifications %}
-          <div class="notif-item">
-            <b>{{ item.occasion }}</b>{% if item.price %} · {{ item.price }} ر.ي{% endif %}<br>
-            <span>{{ item.place }} · {{ item.created_at|date:"Y/m/d H:i" }}</span>
-          </div>
-        {% empty %}
-          <div class="notif-item"><span>لا توجد طلبات بعد</span></div>
-        {% endfor %}
-      {% else %}
-        <div class="notif-item"><span>الطلبات تظهر هنا بعد الإرسال</span></div>
-      {% endif %}
+    <div class="left-tools">
+      <form class="search" id="searchForm">
+        <input id="inviteSearch" type="search" value="{{ q }}" placeholder="بحث">
+      </form>
+      <button class="bell" id="bellBtn" type="button">
+        ⌂
+        {% if notification_count %}
+          <span class="badge">{{ notification_count }}</span>
+        {% endif %}
+      </button>
+      <button class="dots" id="menuBtn" type="button">⋯</button>
     </div>
+  </header>
 
-    <button class="overlay" id="overlay" type="button"></button>
-    <aside class="sidebar" id="sidebar">
-      <a href="{% url 'home' %}">الرئيسية</a>
-      <a href="{% url 'about' %}">حول</a>
-      <a href="{% url 'order' %}">طلب</a>
-      {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}">خروج ({{ user.username }})</a>
-      {% else %}
-        <a href="{% url 'login' %}">دخول</a>
-        <a href="{% url 'register' %}">تسجيل</a>
-      {% endif %}
-      <a class="ig" href="https://instagram.com/_4cioq" target="_blank" rel="noopener"><div class="mark">IG</div><div><b>Instagram</b><span>_4cioq</span></div></a>
-      <a class="ig" href="https://tiktok.com/@_4cioq" target="_blank" rel="noopener"><div class="mark">TT</div><div><b>TikTok</b><span>_4cioq</span></div></a>
-      <button class="theme-btn" id="themeBtn" type="button">ليلي</button>
-    </aside>
+  <div class="note" id="resultNote"></div>
 
-    <main class="page">
-      <div class="grid">
-        <article class="card" data-invite="رسم رقمي"><img src="{% static 'e_invites/10.jpg' %}" alt=""><div class="card-body"><h3>رسم رقمي</h3><div class="price">1000 ر.ي</div><a class="btn" href="{% url 'order' %}?product=رسم رقمي">طلب</a></div></article>
-        <article class="card" data-invite="مواليد"><img src="{% static 'e_invites/11.jpg' %}" alt=""><div class="card-body"><h3>مواليد</h3><div class="price">1000 ر.ي</div><a class="btn" href="{% url 'order' %}?product=مواليد">طلب</a></div></article>
-        <article class="card" data-invite="زفاف"><img src="{% static 'e_invites/19.jpg' %}" alt=""><div class="card-body"><h3>زفاف</h3><div class="price">1000 ر.ي</div><a class="btn" href="{% url 'order' %}?product=زفاف">طلب</a></div></article>
-        <article class="card" data-invite="تخرج"><img src="{% static 'e_invites/23.jpg' %}" alt=""><div class="card-body"><h3>تخرج</h3><div class="price">1000 ر.ي</div><a class="btn" href="{% url 'order' %}?product=تخرج">طلب</a></div></article>
-        <article class="card" data-invite="فيديو"><video muted playsinline preload="metadata" data-full="{% static 'e_invites/20.mp4' %}"><source src="{% static 'e_invites/20.mp4' %}" type="video/mp4"></video><div class="card-body"><h3>فيديو</h3><div class="price">300 ر.ي</div><a class="btn" href="{% url 'order' %}?product=فيديو">طلب</a></div></article>
-        <article class="card" data-invite="جرائد وورقيات ورق جريدة"><img src="{% static 'e_invites/18.jpg' %}" alt=""><div class="card-body"><h3>جرائد وورقيات</h3><div class="price">500 ر.ي</div><a class="btn" href="{% url 'order' %}?product=جرائد وورقيات">طلب</a></div></article>
-
-        {% for product in products %}
-        <article class="card" data-invite="{{ product.name }}">
-          {% if product.image %}
-            {% if ".mp4" in product.image.url|lower or ".mov" in product.image.url|lower or ".avi" in product.image.url|lower %}
-              <video muted playsinline preload="metadata" data-full="{{ product.image.url }}">
-                <source src="{{ product.image.url }}" type="video/mp4">
-                <source src="{{ product.image.url }}" type="video/quicktime">
-              </video>
-            {% else %}
-              <img src="{{ product.image.url }}" alt="">
-            {% endif %}
-          {% else %}
-            <img src="{% static 'e_invites/22.jpg' %}" alt="">
-          {% endif %}
-          <div class="card-body">
-            <h3>{{ product.name }}</h3>
-            <div class="price">{% if product.price %}{{ product.price }}{% else %}1000{% endif %} ر.ي</div>
-            <a class="btn" href="{% url 'order' %}?product={{ product.name }}">طلب</a>
-          </div>
-        </article>
-        {% endfor %}
-      </div>
-    </main>
-    <footer class="footer">دعوات الكترونيه🐆 · _4cioq</footer>
+  <div class="notif" id="notifPanel">
+    <h4>الإشعارات</h4>
+    {% if user.is_authenticated %}
+      {% for item in notifications %}
+        <div class="notif-item">
+          <b>{{ item.occasion }}</b>
+          {% if item.price %}· {{ item.price }} ر.ي{% endif %}
+          <br>
+          <span>{{ item.place }} · {{ item.created_at|date:"Y/m/d H:i" }}</span>
+        </div>
+      {% empty %}
+        <div class="notif-item"><span>لا توجد طلبات بعد</span></div>
+      {% endfor %}
+    {% else %}
+      <div class="notif-item"><span>الطلبات تظهر هنا بعد الإرسال</span></div>
+    {% endif %}
   </div>
 
-  <div class="lightbox" id="lbImgBox"><button class="lb-x" type="button" data-close>✖</button><img id="lbImg" alt=""></div>
-  <div class="lightbox" id="lbVidBox"><button class="lb-x" type="button" data-close>✖</button><video id="lbVid" controls playsinline></video></div>
+  <button class="overlay" id="overlay" type="button"></button>
 
-  <script>
-    const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), notif=document.getElementById("notifPanel");
-    const closeSide=()=>{sidebar.classList.remove("open"); overlay.classList.remove("show");};
-    document.getElementById("menuBtn").onclick=()=>{notif.classList.remove("show");sidebar.classList.add("open");overlay.classList.add("show");};
-    document.getElementById("bellBtn").onclick=()=>{closeSide(); notif.classList.toggle("show");};
-    overlay.onclick=()=>{closeSide(); notif.classList.remove("show");};
+  <aside class="sidebar" id="sidebar">
+    <a href="{% url 'home' %}">الرئيسية</a>
+    <a href="#" onclick="openAboutModal(); return false;">حول التطبيق</a>
+    <a href="#" onclick="openOrderModal(); return false;">طلب</a>
 
-    const themeBtn=document.getElementById("themeBtn");
-    const saved=localStorage.getItem("theme")||"light";
-    document.documentElement.setAttribute("data-theme",saved);
-    themeBtn.textContent=saved==="dark"?"نهاري":"ليلي";
-    themeBtn.onclick=()=>{const n=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark"; document.documentElement.setAttribute("data-theme",n); localStorage.setItem("theme",n); themeBtn.textContent=n==="dark"?"نهاري":"ليلي";};
+    {% if user.is_authenticated %}
+      <a href="{% url 'logout' %}">خروج ({{ user.username }})</a>
+    {% else %}
+      <a href="{% url 'login' %}">دخول</a>
+      <a href="{% url 'register' %}">تسجيل</a>
+    {% endif %}
 
-    document.getElementById("searchForm").addEventListener("submit",e=>e.preventDefault());
-    const search=document.getElementById("inviteSearch"), note=document.getElementById("resultNote");
-    function filterCards(q){q=(q||"").trim();let n=0;document.querySelectorAll("[data-invite]").forEach(c=>{const ok=!q||c.dataset.invite.includes(q);c.classList.toggle("hidden",!ok);if(ok)n++;});note.classList.toggle("show",!!q);note.textContent=q?(n?q+" · "+n:"لا توجد نتائج"):"";}
-    filterCards(search.value); search.addEventListener("input",()=>filterCards(search.value));
+    <a class="ig" href="https://instagram.com/_4cioq" target="_blank" rel="noopener">
+      <div class="mark">IG</div>
+      <div>
+        <b>Instagram</b>
+        <span>_4cioq</span>
+      </div>
+    </a>
 
-    const lbI=document.getElementById("lbImgBox"), lbV=document.getElementById("lbVidBox"), lbImg=document.getElementById("lbImg"), lbVid=document.getElementById("lbVid");
-    function closeLb(){lbI.classList.remove("show");lbV.classList.remove("show");lbVid.pause();lbVid.removeAttribute("src");}
-    document.querySelectorAll(".card img").forEach(i=>i.addEventListener("click",()=>{lbImg.src=i.src;lbI.classList.add("show");}));
-    document.querySelectorAll(".card video").forEach(v=>v.addEventListener("click",()=>{lbVid.src=v.dataset.full||v.querySelector("source").src;lbV.classList.add("show");lbVid.play();}));
-    document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeLb);
-    lbI.onclick=e=>{if(e.target===lbI)closeLb();};
-    lbV.onclick=e=>{if(e.target===lbV)closeLb();};
-  </script>
+    <a class="ig" href="https://tiktok.com/@_4cioq" target="_blank" rel="noopener">
+      <div class="mark">TT</div>
+      <div>
+        <b>TikTok</b>
+        <span>_4cioq</span>
+      </div>
+    </a>
+
+    <button class="theme-btn" id="themeBtn" type="button">ليلي</button>
+  </aside>
+
+  <div class="modal-backdrop" id="aboutModal">
+    <div class="modal-box">
+      <button class="modal-close" type="button" onclick="closeModals()">✕</button>
+      <h3>ℹ️ حول التطبيق</h3>
+      <div style="line-height: 1.8; color: var(--text); font-size: 0.95rem; margin-top: 15px;">
+        <p>مرحباً بك في <strong>دعوات الكترونيه🐆</strong>.</p>
+        <p>هذا المشروع مخصص لتسهيل عملية تصميم وطلب الدعوات الإلكترونية لمختلف المناسبات (زفاف، تخرج، مواليد، وغيرها).</p>
+        <ul style="margin-right: 20px; margin-top: 10px; margin-bottom: 10px;">
+          <li>تصفح النماذج المتاحة (صور وفيديوهات).</li>
+          <li>اضغط على "طلب" لتعبئة تفاصيل مناسبتك.</li>
+          <li>سيتم استلام طلبك والتواصل معك لإتمام التصميم.</li>
+        </ul>
+        <p>تم تطوير هذا التطبيق لتوفير تجربة سلسة وأنيقة للعملاء.</p>
+      </div>
+      <button type="button" class="btn-block" onclick="closeModals()">إغلاق</button>
+    </div>
+  </div>
+
+  {% if user.is_staff %}
+    <div class="modal-backdrop" id="addModal">
+      <div class="modal-box">
+        <button class="modal-close" type="button" onclick="closeModals()">✕</button>
+        <h3>➕ إضافة دعوة جديدة</h3>
+        <form method="POST" action="{% url 'form' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">حفظ الإضافة</button>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="modal-backdrop" id="orderModal">
+    <div class="modal-box">
+      <button class="modal-close" type="button" onclick="closeModals()">✕</button>
+      <h3>📝 تقديم طلب جديد</h3>
+      <form method="POST" action="{% url 'order' %}">
+        {% csrf_token %}
+        <p style="margin-bottom:12px; color:var(--muted);">يرجى تعبئة تفاصيل طلبك لنتواصل معك:</p>
+        <input type="text" name="customer_name" placeholder="الاسم الكريم" required>
+        <input type="text" name="contact_info" placeholder="رقم الهاتف / واتساب" required>
+        <select name="invite_type" required>
+          <option value="" disabled selected>اختر نوع الدعوة</option>
+          <option value="رسم رقمي">رسم رقمي</option>
+          <option value="مواليد">مواليد</option>
+          <option value="زفاف">زفاف</option>
+          <option value="تخرج">تخرج</option>
+          <option value="فيديو">فيديو</option>
+          <option value="جرائد وورقيات">جرائد وورقيات</option>
+          <option value="أخرى">أخرى (يرجى التوضيح)</option>
+        </select>
+        <textarea name="details" rows="4" placeholder="تفاصيل إضافية (الألوان المفضلة، النصوص، المناسبة...)" required></textarea>
+        <button type="submit">إرسال الطلب</button>
+      </form>
+    </div>
+  </div>
+
+  <main class="page">
+    {% if user.is_staff %}
+      <div class="admin-bar">
+        <button type="button" class="btn-add" onclick="window.location.href='{% url 'form' %}'">
+          ➕ إضافة دعوة جديدة
+        </button>
+      </div>
+    {% endif %}
+
+    <div class="grid">
+
+      {% for product in products %}
+        <article class="card" data-invite="{{ product.name }}">
+          {% if product.image %}
+            {% with filename=product.image.name|lower %}
+              {% if ".mp4" in filename or ".mov" in filename or ".avi" in filename or ".webm" in filename %}
+                <!-- حاوية فيديو ديناميكية آمنة تمنع IDM من التقاطه -->
+                <div class="video-thumb-container" style="position:relative; width:100%; height:240px; background:#241512;" data-full="{{ product.image.url }}">
+                  <video muted playsinline preload="metadata" style="width:100%; height:100%; object-fit:cover; pointer-events:none;">
+                    <source src="{{ product.image.url }}" type="video/mp4">
+                  </video>
+                  <div style="position:absolute; inset:0; display:grid; place-items:center; background:rgba(0,0,0,0.3); color:#fff; font-size:40px;">
+                    ▶
+                  </div>
+                </div>
+              {% else %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+              {% endif %}
+            {% endwith %}
+          {% else %}
+            <img src="{% static 'e_invites/22.jpg' %}" alt="{{ product.name }}">
+          {% endif %}
+
+          <div class="card-body">
+            <h3>{{ product.name }}</h3>
+            <div class="price">{{ product.price }} ر.ي</div>
+            <a class="btn" href="{% url 'order' %}?product={{ product.name }}">طلب</a>
+
+            {% if user.is_staff %}
+              <div class="admin-actions">
+                <a href="{% url 'edit_product' product.id %}" class="btn-edit">✏️ تعديل</a>
+                <form action="{% url 'delete_product' product.id %}" method="POST" style="flex:1;display:flex;" onsubmit="return confirm('هل تريد حذف هذه الدعوة بالتأكيد؟');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-delete" style="width:100%;">🗑️ حذف</button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+      {% endfor %}
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    دعوات الكترونيه🐆 · _4cioq
+  </footer>
+
+</div>
+
+<div class="lightbox" id="lbImgBox">
+  <button class="lb-x" type="button" data-close>✖</button>
+  <img id="lbImg" alt="">
+</div>
+
+<div class="lightbox" id="lbVidBox">
+  <button class="lb-x" type="button" data-close>✖</button>
+  <video id="lbVid" controls playsinline></video>
+</div>
+
+<script>
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const notif = document.getElementById("notifPanel");
+
+  const closeSide = () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  };
+
+  document.getElementById("menuBtn").onclick = () => {
+    notif.classList.remove("show");
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+  };
+
+  document.getElementById("bellBtn").onclick = () => {
+    closeSide();
+    notif.classList.toggle("show");
+  };
+
+  overlay.onclick = () => {
+    closeSide();
+    notif.classList.remove("show");
+  };
+
+  const themeBtn = document.getElementById("themeBtn");
+  const saved = localStorage.getItem("theme") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  themeBtn.textContent = saved === "dark" ? "نهاري" : "ليلي";
+
+  themeBtn.onclick = () => {
+    const n = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", n);
+    localStorage.setItem("theme", n);
+    themeBtn.textContent = n === "dark" ? "نهاري" : "ليلي";
+  };
+
+  document.getElementById("searchForm").addEventListener("submit", e => e.preventDefault());
+  const search = document.getElementById("inviteSearch");
+  const note = document.getElementById("resultNote");
+
+  function filterCards(q) {
+    q = (q || "").trim();
+    let n = 0;
+    document.querySelectorAll("[data-invite]").forEach(card => {
+      const name = card.dataset.invite || "";
+      const ok = !q || name.includes(q);
+      card.classList.toggle("hidden", !ok);
+      if (ok) n++;
+    });
+    note.classList.toggle("show", !!q);
+    note.textContent = q ? (n ? q + " · " + n : "لا توجد نتائج") : "";
+  }
+
+  filterCards(search.value);
+  search.addEventListener("input", () => filterCards(search.value));
+
+  function closeModals() {
+    document.querySelectorAll(".modal-backdrop").forEach(modal => {
+      modal.classList.remove("show");
+    });
+  }
+
+  function openOrderModal() {
+    closeSide();
+    document.getElementById("orderModal").classList.add("show");
+  }
+
+  function openAboutModal() {
+    closeSide();
+    document.getElementById("aboutModal").classList.add("show");
+  }
+
+  window.addEventListener("click", function(event) {
+    if (event.target.classList.contains("modal-backdrop")) {
+      closeModals();
+    }
+  });
+
+  const lbI = document.getElementById("lbImgBox");
+  const lbV = document.getElementById("lbVidBox");
+  const lbImg = document.getElementById("lbImg");
+  const lbVid = document.getElementById("lbVid");
+
+  function closeLb() {
+    lbI.classList.remove("show");
+    lbV.classList.remove("show");
+    lbVid.pause();
+    lbVid.removeAttribute("src");
+    lbVid.load();
+  }
+
+  document.querySelectorAll(".card img").forEach(img => {
+    img.addEventListener("click", (e) => {
+      e.preventDefault();
+      lbImg.src = img.src;
+      lbI.classList.add("show");
+    });
+  });
+
+  // التحكم الفعال بفتح الفيديو عبر حاوية الأمان وتجاوز برامج التحميل التلقائي
+  document.querySelectorAll(".video-thumb-container").forEach(container => {
+    container.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const source = container.dataset.full;
+      if (!source) return;
+
+      lbVid.src = source;
+      lbV.classList.add("show");
+      lbVid.play().catch(() => {});
+    });
+  });
+
+  document.querySelectorAll("[data-close]").forEach(button => {
+    button.onclick = closeLb;
+  });
+
+  lbI.onclick = event => {
+    if (event.target === lbI) closeLb();
+  };
+
+  lbV.onclick = event => {
+    if (event.target === lbV) closeLb();
+  };
+</script>
+
 </body>
 </html>

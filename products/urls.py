@@ -1,10 +1,29 @@
-from django.contrib import admin
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
+from django.urls import path
+from . import views
+
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("account/", include("account.urls")),
-    path("", include("e_invites.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # صفحة إدارة المنتجات:
+    # إضافة + تعديل + عرض
+    path(
+        "form/",
+        views.user_form_view,
+        name="form"
+    ),
+
+    # تعديل
+    path(
+        "edit/<int:pk>/",
+        views.edit_product,
+        name="edit_product"
+    ),
+
+    # حذف
+    path(
+        "delete/<int:pk>/",
+        views.delete_product,
+        name="delete_product"
+    ),
+
+]

@@ -15,34 +15,61 @@
 <div class="section-title">
   <h2>جميع التصاميم المتاحة</h2>
 </div>
+
+<style>
+  .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      align-items: stretch;
+  }
+  .card {
+      background: var(--card, #fff);
+      border: 1px solid rgba(215,181,122,.18);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 14px 32px rgba(47,27,20,.10);
+      display: flex;
+      flex-direction: column;
+  }
+  .card img, .card video {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+  }
+  .card-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+  }
+</style>
+
 <div class="grid">
   {% for product in products %}
-  <article class="card" data-invite="{{ product.title }}">
+  <article class="card" data-invite="{{ product.name }}">
     {% if product.image %}
-      <img src="{{ product.image.url }}" alt="{{ product.title }}">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}">
     {% else %}
-      <img src="{% static 'e_invites/10.jpg' %}" alt="{{ product.title }}">
+      <img src="{% static 'e_invites/10.jpg' %}" alt="{{ product.name }}">
     {% endif %}
     <div class="card-body">
-      <h3>{{ product.title }}</h3>
+      <h3>{{ product.name }}</h3>
       <p class="muted">{{ product.description }}</p>
       <div class="price">{{ product.price }} ر.س</div>
       <a class="btn" href="{% url 'order' %}">اطلب هذا التصميم</a>
+      
+      {% if request.user.is_authenticated and request.user.is_staff %}
+      <div style="margin-top: 12px; display: flex; gap: 8px;">
+        <a href="{% url 'edit_product' product.id %}" class="btn" style="background: #c5a059; padding: 6px 12px; font-size: 14px;">تعديل</a>
+        <a href="{% url 'delete_product' product.id %}" onclick="return confirm('هل تريد حذف هذه الدعوة بالتأكيد؟');" class="btn" style="background: #a94442; padding: 6px 12px; font-size: 14px;">حذف</a>
+      </div>
+      {% endif %}
     </div>
   </article>
   {% empty %}
-  <article class="card" data-invite="حفل زفاف">
-    <img src="{% static 'e_invites/10.jpg' %}" alt="حفل زفاف">
-    <div class="card-body"><h3>حفل زفاف</h3><div class="price">80 ر.س</div><a class="btn" href="{% url 'order' %}">اطلب</a></div>
-  </article>
-  <article class="card" data-invite="خطوبة">
-    <img src="{% static 'e_invites/10.jpg' %}" alt="خطوبة">
-    <div class="card-body"><h3>دعوة خطوبة</h3><div class="price">60 ر.س</div><a class="btn" href="{% url 'order' %}">اطلب</a></div>
-  </article>
-  <article class="card" data-invite="مواليد">
-    <img src="{% static 'e_invites/10.jpg' %}" alt="مواليد">
-    <div class="card-body"><h3>دعوة مواليد</h3><div class="price">50 ر.س</div><a class="btn" href="{% url 'order' %}">اطلب</a></div>
-  </article>
+  <p style="text-align: center; grid-column: 1 / -1; padding: 20px;">لا توجد منتجات متاحة حالياً.</p>
   {% endfor %}
 </div>
 {% endblock %}
