@@ -13,7 +13,6 @@ class Tag(models.Model):
 
 
 class ProductDetail(models.Model):
-    # علاقة من واحد إلى واحد (One-to-One)
     product = models.OneToOneField(
         'Product',
         on_delete=models.CASCADE,
@@ -69,7 +68,6 @@ class Product(models.Model):
         verbose_name="النوع"
     )
 
-    # علاقة من كثير إلى كثير (Many-to-Many)
     tags = models.ManyToManyField(
         Tag,
         blank=True,
@@ -104,6 +102,12 @@ class ProductImage(models.Model):
 
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'قيد الانتظار'),
+        ('accepted', 'مقبول'),
+        ('rejected', 'مرفوض'),
+    )
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -111,29 +115,74 @@ class Order(models.Model):
         blank=True
     )
 
+    # الحقول المطلوبة لواجهة الطلبات الجديدة
+    customer_name = models.CharField(
+        max_length=200,
+        verbose_name="اسم العميل",
+        blank=True,
+        null=True
+    )
+
+    contact_info = models.CharField(
+        max_length=50,
+        verbose_name="رقم الهاتف / واتساب",
+        blank=True,
+        null=True
+    )
+
+    invite_type = models.CharField(
+        max_length=100,
+        verbose_name="نوع الدعوة",
+        blank=True,
+        null=True
+    )
+
+    details = models.TextField(
+        blank=True,
+        verbose_name="تفاصيل إضافية"
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+        verbose_name="حالة الطلب"
+    )
+
+    # الحقول القديمة احتفظنا بها اختيارية (blank=True, null=True) لمنع أي تعارض
     occasion = models.CharField(
         max_length=200,
-        verbose_name="مناسبة الدعوة"
+        verbose_name="مناسبة الدعوة",
+        blank=True,
+        null=True
     )
 
     price = models.DecimalField(
         max_digits=10,
         decimal_places=0,
-        verbose_name="السعر"
+        verbose_name="السعر",
+        blank=True,
+        null=True
     )
 
     date = models.DateField(
-        verbose_name="تاريخ المناسبة"
+        verbose_name="تاريخ المناسبة",
+        blank=True,
+        null=True
     )
 
     phone = models.CharField(
         max_length=20,
-        verbose_name="رقم الهاتف"
+        verbose_name="رقم الهاتف",
+        blank=True,
+        null=True
     )
 
     place = models.CharField(
         max_length=200,
-        verbose_name="المكان"
+        verbose_name="المكان",
+        blank=True,
+        null=True
     )
 
     names = models.CharField(
@@ -152,4 +201,4 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f"طلب: {self.occasion} - {self.phone}"
+        return f"طلب: {self.customer_name or self.occasion} - {self.contact_info or self.phone}"

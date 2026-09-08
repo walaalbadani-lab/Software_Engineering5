@@ -146,22 +146,30 @@
       color:#f6eee4;
       font-size:20px;
       position:relative;
+      display:grid;
+      place-items:center;
+      transition: 0.2s;
+    }
+
+    .bell:hover, .dots:hover {
+      background: rgba(215,181,122,.15);
     }
 
     .badge {
       position:absolute;
-      top:-4px;
-      left:-4px;
-      min-width:17px;
-      height:17px;
+      top:-6px;
+      left:-6px;
+      min-width:20px;
+      height:20px;
       padding:0 4px;
       border-radius:999px;
-      background:var(--gold);
-      color:#2b1812;
-      font-size:10px;
+      background:#e53935;
+      color:white;
+      font-size:11px;
       font-weight:800;
       display:grid;
       place-items:center;
+      border: 2px solid rgba(58,33,25,1);
     }
 
     .note {
@@ -267,12 +275,15 @@
       top:72px;
       left:16px;
       z-index:50;
-      width:min(340px,calc(100% - 32px));
+      width:min(380px,calc(100% - 32px));
       display:none;
-      padding:14px;
+      padding:16px;
       background:var(--card);
       border-radius:16px;
-      box-shadow:0 16px 36px rgba(0,0,0,.18);
+      box-shadow:0 16px 36px rgba(0,0,0,.25);
+      max-height: 480px;
+      overflow-y: auto;
+      border: 1px solid var(--gold);
     }
 
     .notif.show {
@@ -280,13 +291,26 @@
     }
 
     .notif h4 {
-      margin-bottom:8px;
+      margin-bottom:12px;
+      color: var(--brown);
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 6px;
+    }
+
+    .notif-section-title {
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin: 10px 0 6px 0;
+      color: var(--brown);
     }
 
     .notif-item {
-      padding:8px 0;
-      border-bottom:1px solid rgba(139,94,60,.15);
-      font-size:.82rem;
+      padding:10px;
+      border-radius: 10px;
+      background: rgba(215,181,122,.08);
+      border: 1px solid rgba(215,181,122,.2);
+      font-size:.85rem;
+      margin-bottom: 8px;
     }
 
     .notif-item span {
@@ -526,6 +550,23 @@
 <body>
 <div class="app">
 
+  {% if messages %}
+  <div class="django-messages" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px;">
+    {% for message in messages %}
+      <div style="background: var(--gold); color: var(--brown); padding: 16px; border-radius: 12px; text-align: center; font-weight: 800; font-size: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,0.25);">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  <script>
+    setTimeout(function() {
+      const msgs = document.querySelector('.django-messages');
+      if (msgs) { msgs.style.display = 'none'; }
+    }, 4000);
+  </script>
+  {% endif %}
+
+  <!-- الشريط العلوي -->
   <header class="topbar">
     <a class="brand" href="{% url 'home' %}">
       <img src="{% static 'e_invites/22.jpg' %}" alt="_4cioq">
@@ -539,34 +580,89 @@
       <form class="search" id="searchForm">
         <input id="inviteSearch" type="search" value="{{ q }}" placeholder="بحث">
       </form>
-      <button class="bell" id="bellBtn" type="button">
-        ⌂
-        {% if notification_count %}
-          <span class="badge">{{ notification_count }}</span>
+      
+      <!-- زر الجرس الموحد -->
+      <button class="bell" id="bellBtn" type="button" title="التنبيهات والطلبات">
+        🔔
+        {% if user.is_authenticated %}
+          <span class="badge">
+            {% if user.is_staff and orders %}{{ orders|length }}{% else %}•{% endif %}
+          </span>
         {% endif %}
       </button>
+
       <button class="dots" id="menuBtn" type="button">⋯</button>
     </div>
   </header>
 
   <div class="note" id="resultNote"></div>
 
+  <!-- لوحة الإشعارات والطلبات المنسدلة -->
   <div class="notif" id="notifPanel">
-    <h4>الإشعارات</h4>
+    
+    <!-- إذا كان المستخدم أدمن، يتم عرض طلبات العملاء مع زري القبول والرفض -->
+    {% if user.is_staff %}
+      <div class="notif-section-title">📦 طلبات العملاء الجديدة ({{ orders|length|default:0 }})</div>
+      {% if orders %}
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+          {% for ord in orders %}
+            <div class="notif-item" style="border: 1px solid var(--gold);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <b style="color: var(--brown);">العميل: {{ ord.customer_name }}</b>
+                <span style="background: var(--brown); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 0.7rem;">{{ ord.invite_type }}</span>
+              </div>
+              <div style="font-size: 0.8rem; margin-bottom: 4px;"><strong>التواصل:</strong> {{ ord.contact_info }}</div>
+              {% if ord.details %}
+                <div style="font-size: 0.78rem; color: var(--muted); margin-bottom: 6px;"><strong>التفاصيل:</strong> {{ ord.details }}</div>
+              {% endif %}
+              
+              <!-- أزرار القبول والرفض المرتبطة بالمسارات الجديدة -->
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <form action="{% url 'accept_order' ord.pk %}" method="POST" style="flex: 1;">
+                  {% csrf_token %}
+                  <button type="submit" style="width: 100%; background: #2e7d32; color: #fff; border: 0; padding: 5px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer;">
+                    ✓ قبول الطلب
+                  </button>
+                </form>
+                <form action="{% url 'reject_order' ord.pk %}" method="POST" style="flex: 1;">
+                  {% csrf_token %}
+                  <button type="submit" style="width: 100%; background: #c62828; color: #fff; border: 0; padding: 5px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer;">
+                    ✕ رفض الطلب
+                  </button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="notif-item" style="margin-bottom: 15px; text-align: center;"><span>لا توجد طلبات بانتظار المراجعة</span></div>
+      {% endif %}
+    {% endif %}
+
+    <!-- قسم الإشعارات وحالة طلبات المستخدم -->
+    <div class="notif-section-title">🔔 حالة طلباتك والإشعارات</div>
     {% if user.is_authenticated %}
       {% for item in notifications %}
-        <div class="notif-item">
-          <b>{{ item.occasion }}</b>
-          {% if item.price %}· {{ item.price }} ر.ي{% endif %}
-          <br>
-          <span>{{ item.place }} · {{ item.created_at|date:"Y/m/d H:i" }}</span>
+        <div class="notif-item" style="border: 1px solid var(--gold);">
+          <div style="font-weight: bold; margin-bottom: 4px;">طلب: {{ item.invite_type }}</div>
+          <div style="font-size: 0.85rem; margin-bottom: 4px; font-weight: bold; color: {% if item.status == 'accepted' %}green{% elif item.status == 'rejected' %}red{% else %}orange{% endif %};">
+            {% if item.status == 'accepted' %}
+              ✨ تم قبول طلبك بنجاح!
+            {% elif item.status == 'rejected' %}
+              ❌ عذراً، تم رفض طلبك.
+            {% else %}
+              ⏳ طلبك قيد المراجعة من الإدارة.
+            {% endif %}
+          </div>
+          <div style="font-size: 0.75rem; color: var(--muted);">{{ item.created_at|date:"Y/m/d H:i" }}</div>
         </div>
       {% empty %}
-        <div class="notif-item"><span>لا توجد طلبات بعد</span></div>
+        <div class="notif-item"><span>لا توجد طلبات سابقة لك</span></div>
       {% endfor %}
     {% else %}
-      <div class="notif-item"><span>الطلبات تظهر هنا بعد الإرسال</span></div>
+      <div class="notif-item"><span>يرجى تسجيل الدخول لمشاهدة حالة طلباتك</span></div>
     {% endif %}
+
   </div>
 
   <button class="overlay" id="overlay" type="button"></button>
@@ -574,7 +670,7 @@
   <aside class="sidebar" id="sidebar">
     <a href="{% url 'home' %}">الرئيسية</a>
     <a href="#" onclick="openAboutModal(); return false;">حول التطبيق</a>
-    <a href="#" onclick="openOrderModal(); return false;">طلب</a>
+    <a href="#" onclick="openOrderModal('دعوة عامة'); return false;">طلب</a>
 
     {% if user.is_authenticated %}
       <a href="{% url 'logout' %}">خروج ({{ user.username }})</a>
@@ -594,7 +690,6 @@
     <a class="ig" href="https://tiktok.com/@_4cioq" target="_blank" rel="noopener">
       <div class="mark">TT</div>
       <div>
-        <b>TikTok</b>
         <span>_4cioq</span>
       </div>
     </a>
@@ -602,43 +697,25 @@
     <button class="theme-btn" id="themeBtn" type="button">ليلي</button>
   </aside>
 
+  <!-- نافذة حول التطبيق -->
   <div class="modal-backdrop" id="aboutModal">
     <div class="modal-box">
       <button class="modal-close" type="button" onclick="closeModals()">✕</button>
       <h3>ℹ️ حول التطبيق</h3>
       <div style="line-height: 1.8; color: var(--text); font-size: 0.95rem; margin-top: 15px;">
         <p>مرحباً بك في <strong>دعوات الكترونيه🐆</strong>.</p>
-        <p>هذا المشروع مخصص لتسهيل عملية تصميم وطلب الدعوات الإلكترونية لمختلف المناسبات (زفاف، تخرج، مواليد، وغيرها).</p>
-        <ul style="margin-right: 20px; margin-top: 10px; margin-bottom: 10px;">
-          <li>تصفح النماذج المتاحة (صور وفيديوهات).</li>
-          <li>اضغط على "طلب" لتعبئة تفاصيل مناسبتك.</li>
-          <li>سيتم استلام طلبك والتواصل معك لإتمام التصميم.</li>
-        </ul>
-        <p>تم تطوير هذا التطبيق لتوفير تجربة سلسة وأنيقة للعملاء.</p>
+        <p>هذا المشروع مخصص لتسهيل عملية تصميم وطلب الدعوات الإلكترونية.</p>
       </div>
       <button type="button" class="btn-block" onclick="closeModals()">إغلاق</button>
     </div>
   </div>
 
-  {% if user.is_staff %}
-    <div class="modal-backdrop" id="addModal">
-      <div class="modal-box">
-        <button class="modal-close" type="button" onclick="closeModals()">✕</button>
-        <h3>➕ إضافة دعوة جديدة</h3>
-        <form method="POST" action="{% url 'form' %}" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit">حفظ الإضافة</button>
-        </form>
-      </div>
-    </div>
-  {% endif %}
-
+  <!-- نافذة تقديم الطلب للعميل -->
   <div class="modal-backdrop" id="orderModal">
     <div class="modal-box">
       <button class="modal-close" type="button" onclick="closeModals()">✕</button>
       <h3>📝 تقديم طلب جديد</h3>
-      <form method="POST" action="{% url 'order' %}">
+      <form method="POST" action="{% url 'create_order' %}">
         {% csrf_token %}
         <p style="margin-bottom:12px; color:var(--muted);">يرجى تعبئة تفاصيل طلبك لنتواصل معك:</p>
         <input type="text" name="customer_name" placeholder="الاسم الكريم" required>
@@ -660,8 +737,10 @@
   </div>
 
   <main class="page">
-    {% if user.is_staff %}
-      <div class="admin-bar">
+    
+    <!-- زر إضافة منتج جديد للأدمن -->
+    {% if user.is_staff and products %}
+      <div class="admin-bar" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
         <button type="button" class="btn-add" onclick="window.location.href='{% url 'form' %}'">
           ➕ إضافة دعوة جديدة
         </button>
@@ -669,13 +748,11 @@
     {% endif %}
 
     <div class="grid">
-
       {% for product in products %}
         <article class="card" data-invite="{{ product.name }}">
           {% if product.image %}
             {% with filename=product.image.name|lower %}
               {% if ".mp4" in filename or ".mov" in filename or ".avi" in filename or ".webm" in filename %}
-                <!-- حاوية فيديو ديناميكية آمنة تمنع IDM من التقاطه -->
                 <div class="video-thumb-container" style="position:relative; width:100%; height:240px; background:#241512;" data-full="{{ product.image.url }}">
                   <video muted playsinline preload="metadata" style="width:100%; height:100%; object-fit:cover; pointer-events:none;">
                     <source src="{{ product.image.url }}" type="video/mp4">
@@ -695,7 +772,7 @@
           <div class="card-body">
             <h3>{{ product.name }}</h3>
             <div class="price">{{ product.price }} ر.ي</div>
-            <a class="btn" href="{% url 'order' %}?product={{ product.name }}">طلب</a>
+            <a class="btn" href="#" onclick="openOrderModal('{{ product.name }}'); return false;">طلب</a>
 
             {% if user.is_staff %}
               <div class="admin-actions">
@@ -710,7 +787,6 @@
         </article>
       {% empty %}
       {% endfor %}
-
     </div>
   </main>
 
@@ -785,8 +861,10 @@
     note.textContent = q ? (n ? q + " · " + n : "لا توجد نتائج") : "";
   }
 
-  filterCards(search.value);
-  search.addEventListener("input", () => filterCards(search.value));
+  if (search) {
+    filterCards(search.value);
+    search.addEventListener("input", () => filterCards(search.value));
+  }
 
   function closeModals() {
     document.querySelectorAll(".modal-backdrop").forEach(modal => {
@@ -794,14 +872,36 @@
     });
   }
 
-  function openOrderModal() {
-    closeSide();
-    document.getElementById("orderModal").classList.add("show");
-  }
-
   function openAboutModal() {
     closeSide();
     document.getElementById("aboutModal").classList.add("show");
+  }
+
+  function openOrderModal(inviteName) {
+    closeSide();
+    const modal = document.getElementById("orderModal");
+    modal.classList.add("show");
+    
+    if (inviteName) {
+      const select = modal.querySelector('select[name="invite_type"]');
+      if (select) {
+        let found = false;
+        for (let option of select.options) {
+          if (option.value === inviteName) {
+            option.selected = true;
+            found = true;
+            break;
+          }
+        }
+        if (!found && inviteName !== 'دعوة عامة') {
+          let opt = document.createElement('option');
+          opt.value = inviteName;
+          opt.text = inviteName;
+          opt.selected = true;
+          select.add(opt);
+        }
+      }
+    }
   }
 
   window.addEventListener("click", function(event) {
@@ -831,7 +931,6 @@
     });
   });
 
-  // التحكم الفعال بفتح الفيديو عبر حاوية الأمان وتجاوز برامج التحميل التلقائي
   document.querySelectorAll(".video-thumb-container").forEach(container => {
     container.addEventListener("click", (e) => {
       e.preventDefault();
@@ -860,4 +959,4 @@
 </script>
 
 </body>
-</html>git add .
+</html>
